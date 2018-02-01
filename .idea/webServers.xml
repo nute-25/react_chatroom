@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="8d4f43c3-df82-4af0-b1d5-95a0d80f7f77" name="yolobling" url="http://puteborgne.sexy">
+        <fileTransfer host="puteborgne.sexy" port="2222" rootFolder="/var/www/yolobling/" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="2222" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
