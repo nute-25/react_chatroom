@@ -1,31 +1,53 @@
-import React, { Component } from "react";
-
+import React from 'react'; // normalement j'ai pas besoin d'importer Component vu que j'importe React
 
 class SeriesItemLister extends React.Component {
     constructor() {
         super();
         this.state = {
-            seriesName : '',
+            seriesName: '',
             seriesList: [],
             seriesEpisodesLists: []
         };
     }
 
     componentDidMount() {
-        //this.props.route.refreshData("seriesList");
+        fetch('seriesList.json',
+            {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                /*body: JSON.stringify({'yolo': 'yolo'})*/
+            })
+            .then(response => response.json())
+            .then(seriesList => {
+                this.setState({seriesList: seriesList});
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
     }
+
+
 
     render() {
         return (
             <div>
+
                 <ul>
-                    {this.state.seriesList.length ?
-                        this.state.seriesList.map(item => <li key={item.id}>{item.seriesName }</li>)
-                        : <li>chargement...</li>
+                    {this.state.seriesList.length?
+                        this.state.seriesList.map(item => (
+                                    <li key={item.id}>{item.seriesName}</li>
+                                )
+                            )
+                        : <li>...</li>
                     }
                 </ul>
+
             </div>
         )
     }
 }
+
 export default SeriesItemLister;

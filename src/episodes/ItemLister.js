@@ -1,10 +1,10 @@
-import React, { Component } from 'react'; // normalement j'ai pas besoin d'importer Component vu que j'importe React
+import React from 'react'; // normalement j'ai pas besoin d'importer Component vu que j'importe React
 
-class ActorsItemLister extends React.Component {
+class EpisodesItemLister extends React.Component {
     constructor() {
         super();
         this.state = {
-            seriesName : '',
+            seriesName: '',
             seriesList: [],
             seriesEpisodesLists: []
         };
@@ -33,31 +33,36 @@ class ActorsItemLister extends React.Component {
                 console.log(error);
             })
     }
+
     // la en fait on feinte, en utilisant une fct flechee on conserve le bon 'this', celui de la classe :)
     handleChange = (event) => {
         this.setState({
             seriesName: event.target.value
         });
     }
+
     render() {
         return (
             <div>
 
-                <input type="text" name="title" placeholder="coucou" value={this.state.seriesName} onChange={this.handleChange}/>
+                <input type="text" name="title" placeholder="coucou" value={this.state.seriesName}
+                       onChange={this.handleChange}/>
                 <ul>
                     {this.state.seriesName.length && this.state.seriesList.length && this.state.seriesEpisodesLists.length ?
-                        this.state.seriesList.filter(item => item.seriesName.toLowerCase().indexOf(this.state.seriesName.toLowerCase()) != -1)
-                            .map(item =>(
-                                <li key={item.id}>{item.seriesName }
-                                    <ul>
-                                        {this.state.seriesEpisodesLists
+                        this.state.seriesList.filter(item => item.seriesName.toLowerCase().indexOf(this.state.seriesName.toLowerCase()) !== -1)
+                            .map(item => (
+                                    <li key={item.id}>{item.seriesName}
+                                        <ol>
+                                            {this.state.seriesEpisodesLists
                                             /* la stro bien mais j'ai besoin a chaque fois que de  la liste des listes, im filter me retournerais tous ceux qui match ds un array, moi m'en fous je veux juste l'object en fait... */
-                                            .reduce( (list, acc) => { return(item.id === list.serie_id? list.episodes_list : acc.episodes_list) })
-                                            .map(item => <li key={item.id}>{item.episodeName }</li>)}
-                                    </ul>
-                                </li>
+                                                .reduce((list, acc) => {
+                                                    return (item.id === list.serie_id ? list.episodes_list : acc.episodes_list)
+                                                })
+                                                .map(item => <li key={item.id}>{item.episodeName}</li>)}
+                                        </ol>
+                                    </li>
+                                )
                             )
-                        )
                         : <li>...</li>
                     }
                 </ul>
@@ -67,4 +72,4 @@ class ActorsItemLister extends React.Component {
     }
 }
 
-export default  ActorsItemLister
+export default EpisodesItemLister;
