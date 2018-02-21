@@ -12,33 +12,9 @@ class SeriesItemLister extends React.Component {
     }
 
     componentDidMount() {
-        fetch('seriesList.json',
-            {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                /*body: JSON.stringify({'yolo': 'yolo'})*/
-            })
-            .then(response => response.json())
-            .then(seriesList => {
-                this.setState({seriesList: seriesList});
-                fetch('seriesEpisodesLists.json', {})
-                    .then(response => response.json())
-                    .then(seriesEpisodesLists => {
-                        this.setState({seriesEpisodesLists: seriesEpisodesLists});
-                    })
-            })
-            .catch(function (error) {
-                console.log(error);
-            })
+        //this.props.route.refreshData("seriesList");
     }
-    handleChange(event) {
-        this.setState({
-            seriesName: event.target.value
-        });
-    }
+
     render() {
         return (
             <div>
@@ -48,8 +24,6 @@ class SeriesItemLister extends React.Component {
                         : <li>chargement...</li>
                     }
                 </ul>
-
-
             </div>
         )
     }
