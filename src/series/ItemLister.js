@@ -34,7 +34,7 @@ class SeriesItemLister extends React.Component {
     render() {
         return (
             <div>
-
+                <h4>Liste des Series depuis /public/seriesList.json</h4>
                 <ul>
                     {this.state.seriesList.length?
                         this.state.seriesList.map(item => (

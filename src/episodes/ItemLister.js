@@ -44,7 +44,7 @@ class EpisodesItemLister extends React.Component {
     render() {
         return (
             <div>
-
+                <h4>Series+Episodes recherchés depuis /public/seriesEpisodesLists.json</h4>
                 <input type="text" name="title" placeholder="coucou" value={this.state.seriesName}
                        onChange={this.handleChange}/>
                 <ul>
