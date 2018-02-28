@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData">
+  <component name="PublishConfigData" autoUpload="Always" serverName="loosers">
     <serverData>
       <paths name="bitnami magento">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="loosers">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/henry/react" local="$PROJECT_DIR$/build" web="/henry/react" />
           </mappings>
         </serverdata>
       </paths>
@@ -31,5 +38,6 @@
         </serverdata>
       </paths>
     </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
   </component>
 </project>

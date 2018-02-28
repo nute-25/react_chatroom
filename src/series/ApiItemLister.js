@@ -14,7 +14,7 @@ class ApiItemLister extends React.Component {
         // pour eviter de lancer trop d'appels a l'api, je passe le fetch au travers d'un *debounce*
         // cela permet de temporiser les appels, i.e ne traite que le dernier appel sur une periode de 500ms
         // j'utilise le debounce de lodash, une librairie d'utilitaires que je recommande chaudement
-        this.fetchResults = _.debounce(this.fetchResults, 500);
+        this.fetchSeries = _.debounce(this.fetchSeries, 500);
     }
 
     componentDidMount() {
@@ -24,7 +24,7 @@ class ApiItemLister extends React.Component {
      * debounced fetch
      * @param url
      */
-    fetchResults = (url) => {
+    fetchSeries = (url) => {
         fetch(url,
             {
                 method: 'GET',
@@ -43,6 +43,7 @@ class ApiItemLister extends React.Component {
             })
     }
 
+
     // la en fait on feinte, en utilisant une fct flechee on conserve le bon 'this', celui de la classe :)
     handleChange = (event) => {
 
@@ -50,14 +51,13 @@ class ApiItemLister extends React.Component {
             seriesName: event.target.value
         });
 
-        if(event.target.value.trim() === ""){
+        if (event.target.value.trim() === "") {
             // on cherche rien , je vais pas me faire chier a aller demander un truc a l'API...
             this.setState({seriesList: []});
-        }else{
+        } else {
             // params a envoyer
             let params = {
-                "keyword": event.target.value,
-                "lang": event.target.value
+                "keyword": event.target.value
             }
             // cconstruction de la string Url
             var searchParams = new URLSearchParams();
@@ -65,11 +65,58 @@ class ApiItemLister extends React.Component {
                 searchParams.append(name, params[name])
             }
             var url = new URL('/henry/api/serie/?' + searchParams, 'http://212.47.242.80');
-            this.fetchResults(url);
+            this.fetchSeries(url);
         }
 
     }
 
+// si une season est dselectionnéee afficher les ep.
+// je fais ca a la porc
+    loadSeasonEpisodes = (seasonId) => {
+        console.log(seasonId);
+
+
+        // params a envoyer
+        let params = {
+            "id": seasonId
+        }
+        // cconstruction de la string Url
+        var searchParams = new URLSearchParams();
+        for (var name in params) {
+            searchParams.append(name, params[name])
+        }
+        var url = new URL('/henry/api/season/?' + searchParams, 'http://212.47.242.80');
+
+        fetch(url,
+            {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(fetchedSeason => {
+                let tmpSeries = this.state.seriesList;
+                tmpSeries.map((serie) => {
+                    serie.seasons.map(season => {
+                        if (season.id === fetchedSeason[0].id) {
+                            season.episodes = fetchedSeason[0].episodes;
+                        }
+                    })
+                })
+                this.setState({seriesList: tmpSeries});
+
+            })
+            .catch(function (error) {
+                console.log(error);
+            })
+
+        // this.setState({
+        //     seriesName: event.target.id
+        // });
+
+    }
 
     render() {
         // decoupe le tableau en sous tableaux de 3 elements
@@ -87,23 +134,30 @@ class ApiItemLister extends React.Component {
                     {this.state.seriesList.length ?
                         chunks.map(chunk => (
                             <div className="row">
-                                {chunk.map(item => (
-                                        <article key={item.id} className="four columns">
+                                {chunk.map(serie => (
+                                        <article key={serie.id} className="four columns">
                                             <hr/>
-                                            {item.banner.length ? <img className="u-max-full-width"
-                                                                       src={'https://www.thetvdb.com/banners/_cache/' + item.banner}
-                                                                       alt={item.name}></img> : ''}
+                                            {serie.banner.length ? <img className="u-max-full-width"
+                                                                        src={'https://www.thetvdb.com/banners/_cache/' + serie.banner}
+                                                                        alt={serie.name}></img> : ''}
 
-                                            <h5>{item.name}</h5>
-                                            {item.translation !== ""?<h6>( {item.translation} )</h6>:''}
+                                            <h5>{serie.name}</h5>
+                                            {serie.translation !== "" ? <h6>( {serie.translation} )</h6> : ''}
                                             <hr/>
                                             <ul>
-                                                {item.seasons.map(season =>
-                                                    season.episodes_count > 0?
-                                                        <li key={season.id}>
-                                                            <em>S{('0' +season.name).slice(-2)}</em> ({season.episodes_count} ep.)
+                                                {serie.seasons.map(season =>
+                                                    season.episodes_count > 0 ?
+                                                        <li key={season.id} onClick={() => {this.loadSeasonEpisodes(season.id)}}>
+                                                            <em >S{('0' + season.name).slice(-2)}</em> ({season.episodes_count} ep.)
+                                                            {season.episodes ?
+                                                                <ul>
+                                                                    {season.episodes.map(episode =>
+                                                                        <li key={episode.id}>{episode.name}</li>
+                                                                    )}
+                                                                </ul>
+                                                                : ''}
                                                         </li>
-                                                    :''
+                                                        : ''
                                                 )}
                                             </ul>
                                         </article>
