@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom'; // importe tout reactDOM. oui c'est con
 // si je m'utilisais que le 'render' de React.DOM je pourrais juste dire que j'ai besoin que de ca
 // import { render } from 'react-dom';
 import {Route, BrowserRouter, Link, Switch} from 'react-router-dom';
+import 'typeface-raleway';
 import './index.css';
 //import registerServiceWorker from './registerServiceWorker';
 
@@ -13,8 +14,7 @@ import Home from './App'; // la mon module s'appelle App mais j'ai emvie de lui 
 import SeriesItemLister from './series/ItemLister';
 import EpisodesItemLister from './episodes/ItemLister';
 import EpisodesCachedItemLister from './episodes/CachedItemLister';
-import ApiItemLister from './api/ItemLister';
-
+import ApiItemLister from './series/ApiItemLister';
 
 
 // The Header creates links that can be used to navigate
@@ -22,11 +22,10 @@ import ApiItemLister from './api/ItemLister';
 const Header = () => (
     <nav className="navbar">
         <ul className="navbar-list clearfix">
-            <li className="navbar-item"><Link className="navbar-link" to='/'>Home</Link></li>
-            <li className="navbar-item"><Link className="navbar-link" to='/all'>SeriesItemLister</Link></li>
-            <li className="navbar-item"><Link className="navbar-link" to='/search'>EpisodesItemLister</Link></li>
-            <li className="navbar-item"><Link className="navbar-link" to='/cached_search'>EpisodesCachedItemLister</Link></li>
-            <li className="navbar-item"><Link className="navbar-link" to='/api'>ApiItemLister</Link></li>
+            <li className="navbar-item"><Link className="navbar-link" to={`${process.env.PUBLIC_URL}/`}>Home</Link></li>
+            <li className="navbar-item"><Link className="navbar-link" to={`${process.env.PUBLIC_URL}/json_search`}>JSON</Link></li>
+            <li className="navbar-item"><Link className="navbar-link" to={`${process.env.PUBLIC_URL}/cached_json_search`}>CACHED + JSON</Link></li>
+            <li className="navbar-item"><Link className="navbar-link" to={`${process.env.PUBLIC_URL}/api_search`}>API</Link></li>
         </ul>
     </nav>
 )
@@ -34,24 +33,24 @@ const Header = () => (
 const Main = () => (
     <main className="container">
         <Switch>
-            <Route exact path='/' component={Home}/>
-            <Route path='/all' component={SeriesItemLister}/>
-            <Route path='/search' component={EpisodesItemLister}/>
-            <Route path='/cached_search' component={EpisodesCachedItemLister}/>
-            <Route path='/api' component={ApiItemLister}/>
+            <Route exact path={`${process.env.PUBLIC_URL}/`} component={Home}/>
+            <Route path={`${process.env.PUBLIC_URL}/all`} component={SeriesItemLister}/>
+            <Route path={`${process.env.PUBLIC_URL}/json_search`} component={EpisodesItemLister}/>
+            <Route path={`${process.env.PUBLIC_URL}/cached_json_search`} component={EpisodesCachedItemLister}/>
+            <Route path={`${process.env.PUBLIC_URL}/api_search`} component={ApiItemLister}/>
         </Switch>
     </main>
 )
 
 const App = () => (
-    <div className="container">
+    <div className="">
         <Header/>
         <Main/>
     </div>
 )
 
 ReactDOM.render((
-    <BrowserRouter>
+    <BrowserRouter basename={'/'}>
         <App/>
     </BrowserRouter>
 ), document.getElementById('root'))
