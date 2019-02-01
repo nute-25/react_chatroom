@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "detect-browser-language": "0.0.1",
+    "firebase": "^5.8.2",
     "lodash": "^4.17.5",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
