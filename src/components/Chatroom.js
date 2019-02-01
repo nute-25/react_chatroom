@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import firebase from 'firebase';
+import marked from 'marked';
 
 
 
@@ -29,11 +30,11 @@ class Chatroom extends Component {
 
                 <ul>
                     {
-                        this.state.firebase_tab.map((elem) => {
+                        this.markdownTab.map((elem) => {
                             return (
                                 <li key={elem.ts}>
                                     { elem.ts } - { elem.displayName } :
-                                    <p> { elem.message }</p>
+                                    <p dangerouslySetInnerHTML={{__html: elem.message }}/>
                                 </li>
                             )
                         })
@@ -122,6 +123,17 @@ class Chatroom extends Component {
     }
     logout () {
         firebase.auth().signOut()
+    }
+
+    get markdownTab () {
+        return (this.state.firebase_tab).map(entry => {
+            return ({
+                ts: entry.ts,
+                uid: entry.uid,
+                displayName: entry.displayName,
+                message: (entry.message) ? marked((entry.message).toString(), { sanitize: true }) : ''
+            })
+        })
     }
 }
 
