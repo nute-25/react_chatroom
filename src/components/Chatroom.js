@@ -17,26 +17,27 @@ class Chatroom extends Component {
     // se met à jour regulièrement dès qu'il y a modif
     //render exécuté avant componentDidMount
     render() {
+        let welcome_name = this.state.user ? this.state.user.displayName : '';
         return (
             <div>
+                <h1>Bonjour { welcome_name }</h1>
                 {
                     this.state.number.map((num) => {
                         return num+1;
                     })
                 }
 
+                {/* grâce bind(this), on sait qui a appelé la fct login */}
                 <button onClick={this.login.bind(this)}>Se connecter !</button>
                 { (this.state.user) ? <button onClick={this.logout.bind(this)}>Se déconnecter !</button> : '' }
 
                 <ul>
                     {
-                        this.markdownTab.map((elem) => {
+                        this.state.firebase_tab.map((elem) => {
                             return (
                                 <li key={elem.ts}>
                                     { elem.ts } - { elem.displayName } :
-                                    <p dangerouslySetInnerHTML={{__html: elem.message }}/>
-                                    {/*Si l'élément a une image on la récupère depuis this.state[IMG_NAME]*/}
-                                    { (elem.img_file_name) ? <img src={ this.state[elem.img_file_name] }/> : '' }
+                                    <p dangerouslySetInnerHTML={{__html: marked(elem.message)}}/>
                                 </li>
                             )
                         })
@@ -44,7 +45,7 @@ class Chatroom extends Component {
                 </ul>
 
                 {/*ref rend l'élément accessible à REACT*/}
-                <canvas ref="canvas"></canvas>
+                <canvas ref="canvas" />
                 { (this.state.user)
                     ? <form onSubmit={this.handleSubmit.bind(this)}>
 
@@ -103,6 +104,7 @@ class Chatroom extends Component {
 
     // qd le texte saisi par l'utilisateur change
     handleChange (event) {
+        /* event.target.value signifie la valeur de la cible de l'événement*/
         this.setState({
             msg: event.target.value
         });
@@ -118,18 +120,6 @@ class Chatroom extends Component {
                 displayName: this.state.user.displayName,
                 message: this.state.msg
             };
-            //inject into storage then send msg
-            /*upluoad blob*/
-            /*retourne moi le snapshot */
-            if (this.state.img && this.state.img.data) {
-                /*push de l'image vers firebase */
-                entry.img_file_name = this.state.img.file_name;
-                firebase.storage().ref(`images/${this.state.user.uid}/`).child(this.state.img.file_name)
-                    .put(this.state.img.data)
-                    .then(snapshot => {
-                        this.render();
-                    });
-            }
             firebase.database().ref('messages/').push(entry, (error) => {
                 if(error) {
                     console.log(error);
@@ -176,7 +166,7 @@ class Chatroom extends Component {
                             snapshot.ref.getDownloadURL()
                                 .then(downloadURL => {
                                     this.setState({
-                                        messages: downloadURL,
+                                        msg: "![alt mon_img](" + downloadURL + ")",
                                     })
                                     this.handleSubmit()
                                     // TODO : cleanup canvas && fileinput
@@ -195,17 +185,6 @@ class Chatroom extends Component {
     }
     logout () {
         firebase.auth().signOut()
-    }
-
-    get markdownTab () {
-        return (this.state.firebase_tab).map(entry => {
-            return ({
-                ts: entry.ts,
-                uid: entry.uid,
-                displayName: entry.displayName,
-                message: (entry.message) ? marked((entry.message).toString(), {sanitize: true}) : ''
-            })
-        })
     }
 }
 
